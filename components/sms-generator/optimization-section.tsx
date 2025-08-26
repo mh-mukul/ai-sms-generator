@@ -4,19 +4,21 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Zap } from "lucide-react"
 import { useFormContext } from "./form-context"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 export function OptimizationSection() {
     const { formData, updateFormData } = useFormContext()
+    const isMobile = useIsMobile()
     const customInputClass = "border-2 focus-visible:ring-2"
 
     return (
         <AccordionItem value="optimization" className="border-border">
-            <AccordionTrigger className="hover:no-underline">
+            <AccordionTrigger className="hover:no-underline cursor-pointer">
                 <div className="flex items-center gap-2">
                     <Zap className="h-4 w-4 text-accent" />
                     <span className="font-[family-name:var(--font-space-grotesk)]">Optimization Goals</span>
                     {formData.optimizationGoal && (
-                        <Badge variant="secondary" className="ml-2">
+                        <Badge variant="secondary" className="ml-2 max-w-[100px] truncate">
                             {formData.optimizationGoal}
                         </Badge>
                     )}
@@ -29,7 +31,7 @@ export function OptimizationSection() {
                         value={formData.optimizationGoal}
                         onValueChange={(value) => updateFormData("optimizationGoal", value)}
                     >
-                        <SelectTrigger className={customInputClass}>
+                        <SelectTrigger className={`${customInputClass} cursor-pointer`}>
                             <SelectValue placeholder="Select optimization goal" />
                         </SelectTrigger>
                         <SelectContent>

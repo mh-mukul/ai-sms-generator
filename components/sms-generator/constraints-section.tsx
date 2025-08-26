@@ -5,18 +5,20 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Settings } from "lucide-react"
 import { useFormContext } from "./form-context"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 export function ConstraintsSection() {
     const { formData, updateFormData } = useFormContext()
+    const isMobile = useIsMobile()
     const customInputClass = "border-2 focus-visible:ring-2"
 
     return (
         <AccordionItem value="constraints" className="border-border">
-            <AccordionTrigger className="hover:no-underline">
+            <AccordionTrigger className="hover:no-underline cursor-pointer">
                 <div className="flex items-center gap-2">
                     <Settings className="h-4 w-4 text-accent" />
                     <span className="font-[family-name:var(--font-space-grotesk)]">Message Constraints</span>
-                    <Badge variant="secondary" className="ml-2">
+                    <Badge variant="secondary" className="ml-2 max-w-[100px] truncate">
                         {formData.characterLimit} chars
                     </Badge>
                 </div>
@@ -41,7 +43,7 @@ export function ConstraintsSection() {
                         type="text"
                         value={formData.personalization}
                         onChange={(e) => updateFormData("personalization", e.target.value)}
-                        className={customInputClass}
+                        className={`${customInputClass}`}
                     />
                 </div>
                 <div className="flex items-center space-x-2">
@@ -49,6 +51,7 @@ export function ConstraintsSection() {
                         id="emojis"
                         checked={formData.includeEmojis}
                         onCheckedChange={(checked) => updateFormData("includeEmojis", checked)}
+                        className="cursor-pointer"
                     />
                     <Label htmlFor="emojis" className="font-[family-name:var(--font-dm-sans)]">
                         Include emojis

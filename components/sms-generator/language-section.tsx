@@ -5,19 +5,21 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Globe } from "lucide-react"
 import { useFormContext } from "./form-context"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 export function LanguageSection() {
     const { formData, updateFormData } = useFormContext()
+    const isMobile = useIsMobile()
     const customInputClass = "border-2 focus-visible:ring-2"
 
     return (
         <AccordionItem value="localization" className="border-border">
-            <AccordionTrigger className="hover:no-underline">
+            <AccordionTrigger className="hover:no-underline cursor-pointer">
                 <div className="flex items-center gap-2">
                     <Globe className="h-4 w-4 text-accent" />
                     <span className="font-[family-name:var(--font-space-grotesk)]">Language & Localization</span>
                     {formData.language && (
-                        <Badge variant="secondary" className="ml-2">
+                        <Badge variant="secondary" className="ml-2 max-w-[100px] truncate">
                             {formData.language}
                         </Badge>
                     )}
@@ -27,7 +29,7 @@ export function LanguageSection() {
                 <div className="space-y-2">
                     <Label className="font-[family-name:var(--font-dm-sans)]">Language</Label>
                     <Select value={formData.language} onValueChange={(value) => updateFormData("language", value)}>
-                        <SelectTrigger className={customInputClass}>
+                        <SelectTrigger className={`${customInputClass} cursor-pointer`}>
                             <SelectValue placeholder="Select language" />
                         </SelectTrigger>
                         <SelectContent>

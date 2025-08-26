@@ -6,6 +6,7 @@ import { useToast } from "@/components/ui/use-toast"
 import { useFormContext } from "./form-context"
 import { Textarea } from "@/components/ui/textarea"
 import { rewriteSMS } from "@/lib/api-client"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 interface SMSDisplayProps {
     sms: string
@@ -17,6 +18,7 @@ interface SMSDisplayProps {
 export function SMSDisplay({ sms, isGenerating, setIsGenerating, setSMS }: SMSDisplayProps) {
     const { toast } = useToast()
     const { formData } = useFormContext()
+    const isMobile = useIsMobile()
     const [isCopied, setIsCopied] = useState(false)
     const [isEditing, setIsEditing] = useState(false)
     const [editedText, setEditedText] = useState(sms)
@@ -162,13 +164,13 @@ export function SMSDisplay({ sms, isGenerating, setIsGenerating, setSMS }: SMSDi
                                 Character count: {isEditing ? editedText.length : sms.length}/{formData.characterLimit}
                             </div>
                             <div className="space-y-4 mt-4">
-                                <div className="flex flex-wrap gap-2">
+                                <div className={`flex ${isMobile ? 'flex-col' : 'flex-wrap'} gap-2`}>
                                     <Button
                                         variant={selectedOption === "regenerate" ? "default" : "outline"}
                                         size="sm"
                                         onClick={() => setSelectedOption("regenerate")}
                                         disabled={isGenerating}
-                                        className="flex-1"
+                                        className={isMobile ? 'w-full' : 'flex-1'}
                                     >
                                         <RefreshCw className="h-4 w-4 mr-2" />
                                         Regenerate
@@ -178,7 +180,7 @@ export function SMSDisplay({ sms, isGenerating, setIsGenerating, setSMS }: SMSDi
                                         size="sm"
                                         onClick={() => setSelectedOption("extend")}
                                         disabled={isGenerating}
-                                        className="flex-1"
+                                        className={isMobile ? 'w-full' : 'flex-1'}
                                     >
                                         <Maximize2 className="h-4 w-4 mr-2" />
                                         Extend
@@ -188,7 +190,7 @@ export function SMSDisplay({ sms, isGenerating, setIsGenerating, setSMS }: SMSDi
                                         size="sm"
                                         onClick={() => setSelectedOption("shorten")}
                                         disabled={isGenerating}
-                                        className="flex-1"
+                                        className={isMobile ? 'w-full' : 'flex-1'}
                                     >
                                         <Minimize2 className="h-4 w-4 mr-2" />
                                         Shorten

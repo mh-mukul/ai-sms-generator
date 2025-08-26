@@ -17,6 +17,7 @@ import { ConstraintsSection } from "./constraints-section"
 import { OptimizationSection } from "./optimization-section"
 import { LanguageSection } from "./language-section"
 import { generateSMS } from "@/lib/api-client"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 interface SMSFormProps {
     onGenerateSuccess: (sms: string) => void
@@ -27,6 +28,7 @@ interface SMSFormProps {
 export function SMSForm({ onGenerateSuccess, isGenerating, setIsGenerating }: SMSFormProps) {
     const { toast } = useToast()
     const { formData, resetFormData, updateFormData } = useFormContext()
+    const isMobile = useIsMobile()
     const customInputClass = "border-2 focus-visible:ring-2"
 
     const handleGenerate = async (event: React.FormEvent) => {
@@ -74,20 +76,25 @@ export function SMSForm({ onGenerateSuccess, isGenerating, setIsGenerating }: SM
 
     return (
         <Card className="border-border border-2 h-full">
-            <CardHeader className="pb-4">
-                <CardTitle className="font-[family-name:var(--font-space-grotesk)]">Campaign Parameters</CardTitle>
-                <CardDescription className="font-[family-name:var(--font-dm-sans)]">
-                    Configure your SMS campaign settings for optimal results
-                </CardDescription>
-                {/* Reset Button */}
-                <div className="absolute top-4 right-4">
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={resetFormData}
-                    >
-                        Reset
-                    </Button>
+            <CardHeader className="pb-4 relative">
+                <div className={`flex ${isMobile ? 'flex-col' : 'items-center justify-between'}`}>
+                    <div>
+                        <CardTitle className="font-[family-name:var(--font-space-grotesk)]">Campaign Parameters</CardTitle>
+                        <CardDescription className="font-[family-name:var(--font-dm-sans)]">
+                            Configure your SMS campaign settings for optimal results
+                        </CardDescription>
+                    </div>
+                    <div className={isMobile ? 'mt-4' : ''}>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={resetFormData}
+                            className="font-[family-name:var(--font-dm-sans)] cursor-pointer"
+                        >
+                            Reset
+                        </Button>
+                    </div>
                 </div>
             </CardHeader>
             <CardContent>
@@ -113,12 +120,12 @@ export function SMSForm({ onGenerateSuccess, isGenerating, setIsGenerating }: SM
                     />
                 </div>
 
-                {/* Generate Button */}
+                {/* Form Actions */}
                 <form onSubmit={handleGenerate}>
                     <Button
                         type="submit"
                         disabled={isGenerating || !formData.objective}
-                        className="w-full mt-6 bg-accent hover:bg-accent/90 text-accent-foreground font-[family-name:var(--font-dm-sans)]"
+                        className="w-full mt-6 bg-accent hover:bg-accent/90 text-accent-foreground font-[family-name:var(--font-dm-sans)] cursor-pointer"
                         size="lg"
                     >
                         {isGenerating ? (
