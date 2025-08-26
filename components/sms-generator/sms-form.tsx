@@ -16,6 +16,7 @@ import { ToneSection } from "./tone-section"
 import { ConstraintsSection } from "./constraints-section"
 import { OptimizationSection } from "./optimization-section"
 import { LanguageSection } from "./language-section"
+import { generateSMS } from "@/lib/api-client"
 
 interface SMSFormProps {
     onGenerateSuccess: (sms: string) => void
@@ -33,42 +34,29 @@ export function SMSForm({ onGenerateSuccess, isGenerating, setIsGenerating }: SM
         setIsGenerating(true)
 
         try {
-            const response = await fetch("/api/generate", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    objective: formData.objective,
-                    age_range: formData.demographics.ageRange,
-                    gender: formData.demographics.gender,
-                    customer_segment: formData.customerSegment,
-                    tone: formData.tone,
-                    personalization: formData.personalization,
-                    char_limit: formData.characterLimit,
-                    allow_emojis: formData.includeEmojis,
-                    goal: formData.optimizationGoal,
-                    language: formData.language,
-                    cultural_reference: formData.culturalReferences,
-                    additional_context: formData.additionalContext
-                }),
+            const response = await generateSMS({
+                objective: formData.objective,
+                age_range: formData.demographics.ageRange,
+                gender: formData.demographics.gender,
+                customer_segment: formData.customerSegment,
+                tone: formData.tone,
+                personalization: formData.personalization,
+                char_limit: formData.characterLimit,
+                allow_emojis: formData.includeEmojis,
+                goal: formData.optimizationGoal,
+                language: formData.language,
+                cultural_reference: formData.culturalReferences,
+                additional_context: formData.additionalContext
             })
 
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.error(`API responded with status ${response.status}:`, errorText);
-                throw new Error(`API error: ${response.status}`);
-            }
+            console.log("API response:", response);
 
-            const data = await response.json()
-            console.log("API response:", data);
-
-            if (data.status === "success" && data.output) {
-                onGenerateSuccess(data.output)
+            if (response.status === "success" && response.output) {
+                onGenerateSuccess(response.output)
             } else {
                 toast({
                     title: "Error",
-                    description: data.message || "Failed to generate SMS. Please try again.",
+                    description: response.message || "Failed to generate SMS. Please try again.",
                     variant: "destructive",
                 })
             }

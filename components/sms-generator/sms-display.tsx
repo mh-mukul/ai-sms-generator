@@ -5,6 +5,7 @@ import { Check, Copy, MessageSquare, Maximize2, Minimize2, RefreshCw, Edit, Save
 import { useToast } from "@/components/ui/use-toast"
 import { useFormContext } from "./form-context"
 import { Textarea } from "@/components/ui/textarea"
+import { rewriteSMS } from "@/lib/api-client"
 
 interface SMSDisplayProps {
     sms: string
@@ -75,28 +76,14 @@ export function SMSDisplay({ sms, isGenerating, setIsGenerating, setSMS }: SMSDi
         setIsGenerating(true)
 
         try {
-            const response = await fetch("/api/rewrite", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    text: isEditing ? editedText : sms,
-                    option: selectedOption,
-                    language: formData.language || "english",
-                }),
+            const response = await rewriteSMS({
+                text: isEditing ? editedText : sms,
+                option: selectedOption,
+                language: formData.language || "english",
             })
 
-            if (!response.ok) {
-                const errorText = await response.text()
-                console.error(`Rewrite API responded with status ${response.status}:`, errorText)
-                throw new Error(`API error: ${response.status}`)
-            }
-
-            const data = await response.json()
-
-            if (data.status === "success" && data.output) {
-                setSMS(data.output)
+            if (response.status === "success" && response.output) {
+                setSMS(response.output)
                 toast({
                     title: "Success",
                     description: `SMS ${selectedOption === "extend" ? "extended" : "shortened"} successfully`,
@@ -104,7 +91,7 @@ export function SMSDisplay({ sms, isGenerating, setIsGenerating, setSMS }: SMSDi
             } else {
                 toast({
                     title: "Error",
-                    description: data.message || "Failed to rewrite SMS. Please try again.",
+                    description: response.message || "Failed to rewrite SMS. Please try again.",
                     variant: "destructive",
                 })
             }
