@@ -1,4 +1,18 @@
 import { type NextRequest, NextResponse } from "next/server"
+import https from "node:https"
+import nodeFetch from "node-fetch"
+
+// Create a custom fetch that ignores SSL certificate issues
+const customFetch = (url: string, options: any) => {
+  const httpsAgent = new https.Agent({
+    rejectUnauthorized: false // Ignore SSL certificate validation
+  });
+
+  return nodeFetch(url, {
+    ...options,
+    agent: httpsAgent
+  });
+};
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,7 +31,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Call external API
-    const response = await fetch(`${baseUrl}/webhook/rewrite-sms`, {
+    const response = await customFetch(`${baseUrl}/webhook/rewrite-sms`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

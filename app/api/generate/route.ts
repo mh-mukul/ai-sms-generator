@@ -1,4 +1,18 @@
 import { type NextRequest, NextResponse } from "next/server"
+import https from "node:https"
+import nodeFetch from "node-fetch"
+
+// Create a custom fetch that ignores SSL certificate issues
+const customFetch = (url: string, options: any) => {
+  const httpsAgent = new https.Agent({
+    rejectUnauthorized: false // Ignore SSL certificate validation
+  });
+
+  return nodeFetch(url, {
+    ...options,
+    agent: httpsAgent
+  });
+};
 
 export async function POST(request: NextRequest) {
   try {
@@ -46,12 +60,12 @@ export async function POST(request: NextRequest) {
         console.log("Request body:", JSON.stringify(apiRequestBody));
 
         // Call external API (wrapped in try-catch for better error handling)
-        const response = await fetch(apiUrl, {
+        const response = await customFetch(apiUrl, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(apiRequestBody),
+          body: JSON.stringify(apiRequestBody)
         })
 
         if (!response.ok) {
