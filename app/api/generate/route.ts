@@ -15,8 +15,17 @@ const customFetch = (url: string, options: any) => {
         callback(new Error(`Cannot connect to ${hostname}`), []);
         return;
       }
-      // Use default DNS lookup
-      require('dns').lookup(hostname, options, callback);
+
+      // Custom DNS lookup that prevents localhost resolution
+      const dns = require('dns');
+      dns.lookup(hostname, options, (err: NodeJS.ErrnoException | null, address: string, family: number) => {
+        // Check if the resolved address is localhost/127.0.0.1 and reject if it is
+        if (!err && (address === '127.0.0.1' || address === '::1')) {
+          callback(new Error(`DNS resolved ${hostname} to localhost (${address}), which is not allowed`), []);
+          return;
+        }
+        callback(err, address, family);
+      });
     }
   });
 
@@ -197,6 +206,9 @@ export async function POST(request: NextRequest) {
       } else if (errorMessage.includes('ENOTFOUND')) {
         errorType = "DNS_ERROR";
         errorMessage = `Could not resolve hostname for ${baseUrl}. DNS lookup failed.`;
+      } else if (errorMessage.includes('DNS resolved') && errorMessage.includes('to localhost')) {
+        errorType = "LOCALHOST_RESOLUTION";
+        errorMessage = `Security issue: The hostname is resolving to localhost (127.0.0.1), which is not allowed. Check your DNS configuration or contact your network administrator.`;
       } else if (errorMessage.includes('certificate')) {
         errorType = "SSL_ERROR";
         errorMessage = `SSL certificate issue with ${baseUrl}. The certificate might be invalid or expired.`;
