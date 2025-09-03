@@ -36,27 +36,29 @@ export function ConstraintsSection() {
                     />
                     <p className="text-xs text-muted-foreground">Standard SMS: 160 characters</p>
                 </div>
-                <div className="space-y-2">
-                    <Label className="font-[family-name:var(--font-dm-sans)]">Personalization Fields</Label>
-                    <Input
-                        placeholder="e.g. [name], [discount], [expiry_date]"
-                        type="text"
-                        value={formData.personalization}
-                        onChange={(e) => updateFormData("personalization", e.target.value)}
-                        className={`${customInputClass}`}
-                    />
-                </div>
                 <div className="flex items-center space-x-2">
                     <Checkbox
-                        id="emojis"
-                        checked={formData.includeEmojis}
-                        onCheckedChange={(checked) => updateFormData("includeEmojis", checked)}
+                        id="dynamic_sms"
                         className="cursor-pointer"
+                        checked={formData.dyanmicSMS}
+                        onCheckedChange={(checked) => updateFormData("dyanmicSMS", checked)}
                     />
-                    <Label htmlFor="emojis" className="font-[family-name:var(--font-dm-sans)]">
-                        Include emojis
+                    <Label htmlFor="dynamic_sms" className="font-[family-name:var(--font-dm-sans)]">
+                        Dynamic SMS
                     </Label>
                 </div>
+                {formData.dyanmicSMS && (
+                    <div className="space-y-2">
+                        <Label className="font-[family-name:var(--font-dm-sans)]">Personalization Fields</Label>
+                        <Input
+                            placeholder="e.g. [name], [discount], [expiry_date]"
+                            type="text"
+                            value={formData.personalization}
+                            onChange={(e) => updateFormData("personalization", e.target.value)}
+                            className={`${customInputClass}`}
+                        />
+                    </div>
+                )}
             </AccordionContent>
         </AccordionItem>
     )

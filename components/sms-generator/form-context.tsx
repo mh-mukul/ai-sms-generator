@@ -3,6 +3,7 @@
 import { createContext, useState, useContext, ReactNode } from "react"
 
 export interface FormData {
+    originalSMS: string
     objective: string
     demographics: {
         ageRange: string
@@ -11,6 +12,7 @@ export interface FormData {
     customerSegment: string
     tone: string
     characterLimit: number
+    dyanmicSMS:boolean
     personalization: string
     includeEmojis: boolean
     optimizationGoal: string
@@ -20,15 +22,17 @@ export interface FormData {
 }
 
 const initialFormData: FormData = {
+    originalSMS: "",
     objective: "",
     demographics: { ageRange: "", gender: "" },
     customerSegment: "",
     tone: "",
     characterLimit: 160,
+    dyanmicSMS: false,
     personalization: "",
     includeEmojis: false,
     optimizationGoal: "",
-    language: "",
+    language: "english",
     culturalReferences: "",
     additionalContext: "",
 }

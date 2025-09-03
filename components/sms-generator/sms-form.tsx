@@ -15,9 +15,9 @@ import { AudienceSection } from "./audience-section"
 import { ToneSection } from "./tone-section"
 import { ConstraintsSection } from "./constraints-section"
 import { OptimizationSection } from "./optimization-section"
-import { LanguageSection } from "./language-section"
 import { generateSMS } from "@/lib/api-client"
 import { useIsMobile } from "@/hooks/use-mobile"
+import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group"
 
 interface SMSFormProps {
     onGenerateSuccess: (sms: string) => void
@@ -37,17 +37,14 @@ export function SMSForm({ onGenerateSuccess, isGenerating, setIsGenerating }: SM
 
         try {
             const response = await generateSMS({
+                original_sms: formData.originalSMS,
+                language: formData.language,
                 objective: formData.objective,
                 age_range: formData.demographics.ageRange,
                 gender: formData.demographics.gender,
                 customer_segment: formData.customerSegment,
-                tone: formData.tone,
                 personalization: formData.personalization,
                 char_limit: formData.characterLimit,
-                allow_emojis: formData.includeEmojis,
-                goal: formData.optimizationGoal,
-                language: formData.language,
-                cultural_reference: formData.culturalReferences,
                 additional_context: formData.additionalContext
             })
 
@@ -98,13 +95,40 @@ export function SMSForm({ onGenerateSuccess, isGenerating, setIsGenerating }: SM
                 </div>
             </CardHeader>
             <CardContent>
+                {/* Original SMS */}
+                <div className="space-y-2">
+                    <Label className="font-[family-name:var(--font-dm-sans)]">Write your SMS *</Label>
+                    <Textarea
+                        placeholder="Write your sms..."
+                        value={formData.originalSMS}
+                        onChange={(e) => updateFormData("originalSMS", e.target.value)}
+                        className={`min-h-[80px] ${customInputClass}`}
+                        required
+                    />
+                </div>
+                <div>
+                    <Label className="font-[family-name:var(--font-dm-sans)] mt-2">Language *</Label>
+                    <ToggleGroup
+                        type="single"
+                        value={formData.language}
+                        onValueChange={(value) => updateFormData("language", value)}
+                        className={`w-full ${customInputClass} mt-2`}
+                    >
+                        <ToggleGroupItem value="english" className="cursor-pointer">
+                            English
+                        </ToggleGroupItem>
+                        <ToggleGroupItem value="bangla" className="cursor-pointer">
+                            Bangla
+                        </ToggleGroupItem>
+                    </ToggleGroup>
+                </div>
+
+                <Separator className="my-6" />
+
                 <Accordion type="multiple" defaultValue={["objective", "audience"]} className="space-y-2">
                     <ObjectiveSection />
                     <AudienceSection />
-                    <ToneSection />
                     <ConstraintsSection />
-                    <OptimizationSection />
-                    <LanguageSection />
                 </Accordion>
 
                 <Separator className="my-6" />

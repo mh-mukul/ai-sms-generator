@@ -40,22 +40,19 @@ export async function publicApiClient<T>(
 
 // SMS Generator API client functions
 export interface GenerateSMSParams {
+    original_sms: string;
     objective: string;
     age_range: string;
     gender: string;
     customer_segment: string;
-    tone: string;
     personalization: string;
     char_limit: number;
-    allow_emojis: boolean;
-    goal: string;
     language: string;
-    cultural_reference?: string;
     additional_context?: string;
 }
 
 export async function generateSMS(params: GenerateSMSParams): Promise<ApiResponse<string>> {
-    return publicApiClient<string>('/webhook/generate-sms', {
+    return publicApiClient<string>('/webhook/v1/generate-sms', {
         method: 'POST',
         body: JSON.stringify(params)
     });
